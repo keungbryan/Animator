@@ -92,4 +92,7 @@ void drawTriangle( double x1, double y1, double z1,
 			       double x2, double y2, double z2,
 			       double x3, double y3, double z3 );
 
+// Draw torus : r = torus ring radius; c = torus tube radius; rSeg, cSeg = number of segments / detail
+void drawTorus(double r, double c, int rSeg, int cSeg, int texture);
+
 #endif
