@@ -16,10 +16,12 @@ class Mat3 {
 
 	//---[ Private Variable Declarations ]-----------------
 
-		// matrix elements in row major order
-	T		n[9];
+
 
 public:
+
+	// matrix elements in row major order
+	T		n[9];
 	
 	//---[ Constructors ]----------------------------------
 
@@ -111,10 +113,12 @@ class Mat4 {
 
 	//---[ Private Variable Declarations ]-----------------
 
-		// matrix elements in row-major order
-	T		n[16];
+
 
 public:
+
+	// matrix elements in row-major order
+	T		n[16];
 
 	bool isZero() { return n[0]==0&&n[1]==0&&n[2]==0&&n[3]==0&&n[4]==0&&n[5]==0&&n[6]==0&&n[7]==0&&n[8]==0&&n[9]==0&&n[10]==0&&n[11]==0&&n[12]==0&&n[13]==0&&n[14]==0&&n[15]==0; }
 	
