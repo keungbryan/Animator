@@ -10,15 +10,30 @@ void BSplineCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts,
 										  const bool & bWrap) const
 {
 	ptvEvaluatedCurvePts.clear();
-	ptvEvaluatedCurvePts.push_back(Point(0.0, ptvCtrlPts.front().y));
-	ptvEvaluatedCurvePts.push_back(Point(fAniLength, ptvCtrlPts.back().y));
 
+	Point start1, start2, end1, end2;
+	
 	vector<Point> ptvCtrlPtsCpy;
-	ptvCtrlPtsCpy.push_back(ptvCtrlPts.front());
-	ptvCtrlPtsCpy.push_back(ptvCtrlPts.front());
+	if (bWrap) {
+		start1 = Point((ptvCtrlPts.end() - 2)->x -fAniLength, (ptvCtrlPts.end() - 2)->y);
+		start2 = Point((ptvCtrlPts.end() - 1)->x - fAniLength, (ptvCtrlPts.end() - 1)->y);
+		end1 = Point((ptvCtrlPts.begin())->x + fAniLength, (ptvCtrlPts.begin())->y);
+		end2 = Point((ptvCtrlPts.begin()+1)->x + fAniLength, (ptvCtrlPts.begin()+1)->y);
+	}
+	else {
+		ptvEvaluatedCurvePts.push_back(Point(0.0, ptvCtrlPts.front().y));
+		ptvEvaluatedCurvePts.push_back(Point(fAniLength, ptvCtrlPts.back().y));
+		start1 = ptvCtrlPts.front();
+		start2 = ptvCtrlPts.front();
+		end1 = ptvCtrlPts.back();
+		end2 = ptvCtrlPts.back();
+	}
+
+	ptvCtrlPtsCpy.push_back(start1);
+	ptvCtrlPtsCpy.push_back(start2);
 	ptvCtrlPtsCpy.insert(ptvCtrlPtsCpy.end(), ptvCtrlPts.begin(), ptvCtrlPts.end());
-	ptvCtrlPtsCpy.push_back(ptvCtrlPts.back());
-	ptvCtrlPtsCpy.push_back(ptvCtrlPts.back());
+	ptvCtrlPtsCpy.push_back(end1);
+	ptvCtrlPtsCpy.push_back(end2);
 
 	BezierCurveEvaluator bezierCurveEvaluator;
 
