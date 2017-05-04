@@ -17,6 +17,9 @@
 #define __PARTICLE_SYSTEM_H__
 
 #include "vec.h"
+#include <vector>
+#include <map>
+#include "particle.h"
 
 
 
@@ -74,6 +77,11 @@ public:
 
 
 
+	virtual void AddParticleStartingAt(Vec3<float> pos, int num);
+
+	virtual bool isBakedAt(float t);
+
+
 protected:
 	
 
@@ -89,6 +97,13 @@ protected:
 	bool simulate;						// flag for simulation mode
 	bool dirty;							// flag for updating ui (don't worry about this)
 
+
+	float curr_time;
+
+	vector<Particle> particles;
+	//vector<Force*> forces;
+
+	map<float, vector<Particle>> bakeData;
 };
 
 
