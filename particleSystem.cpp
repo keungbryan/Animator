@@ -57,6 +57,7 @@ void ParticleSystem::startSimulation(float t)
 	bake_end_time = -1;
 	simulate = true;
 	dirty = true;
+	clearBaked();
 
 }
 
@@ -93,7 +94,7 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 	bake_fps = t - curr_time;
 	curr_time = t;
 	if (simulate) {
-		if (!isBakedAt(t)) {
+//		if (!isBakedAt(t)) {
 			/*
 			vector<Particle>::iterator iter;
 			for (iter = particles.begin(); iter != particles.end(); iter++) {
@@ -104,10 +105,10 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 				particles[i].move(bake_fps);
 
 			bakeParticles(t);
-		}
-		else {
-			particles = bakeData[t];
-		}
+//		}
+//		else {
+//			particles = bakeData[t];
+//		}
 	}
 
 }
@@ -161,7 +162,7 @@ void ParticleSystem::clearBaked()
 void ParticleSystem::AddParticleStartingAt(Vec3<float> pos, int num)
 {
 	if (simulate) {
-		if (!isBakedAt(curr_time + bake_fps)) {
+//		if (!isBakedAt(curr_time + bake_fps)) {
 			for (int i = 0; i < num; i++) {
 				Particle p(Vec3<float>(pos[0], pos[1], pos[2]), 1);
 
@@ -176,7 +177,11 @@ void ParticleSystem::AddParticleStartingAt(Vec3<float> pos, int num)
 				p.setVelocity(Vec3<float>(xVelocity, yVelocity, zVelocity));
 				*/
 
-				p.setVelocity(Vec3<float>(5, 0, 0));
+				float xvel = rand() % 2 + 3;
+				float yvel = rand() % 2 + 1;
+				float zvel = rand() % 2 + 5;
+
+				p.setVelocity(Vec3<float>(xvel, yvel, zvel));
 
 				/*
 				vector<Force*>::iterator iter;
@@ -187,7 +192,7 @@ void ParticleSystem::AddParticleStartingAt(Vec3<float> pos, int num)
 
 				particles.push_back(p);
 			}
-		}
+//		}
 	}
 }
 
