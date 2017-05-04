@@ -124,6 +124,14 @@ void ParticleSystem::drawParticles(float t)
 			iter->draw();
 		}
 	}
+	else {
+		if (isBakedAt(t)) {
+			vector<Particle>::iterator iter;
+			for (iter = bakeData[t].begin(); iter != bakeData[t].end(); iter++) {
+				iter->draw();
+			}
+		}
+	}
 
 }
 
@@ -157,14 +165,18 @@ void ParticleSystem::AddParticleStartingAt(Vec3<float> pos, int num)
 			for (int i = 0; i < num; i++) {
 				Particle p(Vec3<float>(pos[0], pos[1], pos[2]), 1);
 
+				/*
 				float mag = rand() % 10 / 10.0 + 0.2;
 				float theta = rand() % 360 / 57.3;
 
 				float xVelocity = rand() % 10 / 10.0 + 2;
 				float yVelocity = cos(theta) * mag;
 				float zVelocity = sin(theta) * mag;
-
+				
 				p.setVelocity(Vec3<float>(xVelocity, yVelocity, zVelocity));
+				*/
+
+				p.setVelocity(Vec3<float>(5, 0, 0));
 
 				/*
 				vector<Force*>::iterator iter;
