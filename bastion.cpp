@@ -4,6 +4,7 @@
 #include <FL/gl.h>
 
 #include "particleSystem.h"
+#include "mat.h"
 
 
 #define COLOR_BEIGE 245.0f / 255.0f, 245.0f / 255.0f, 220.0f / 255.0f
@@ -53,6 +54,54 @@ ModelerView* createBastionModel(int x, int y, int w, int h, char *label)
 	return new BastionModel(x, y, w, h, label);
 }
 
+
+// getModelViewMatrix will return a copy of the
+// current OpenGL MODELVIEW matrix.
+Mat4f getModelViewMatrix()
+{
+	/**************************
+	**
+	**	GET THE OPENGL MODELVIEW MATRIX
+	**
+	**	Since OpenGL stores it's matricies in
+	**	column major order and our library
+	**	use row major order, we will need to
+	**	transpose what OpenGL gives us before returning.
+	**
+	**	Hint:  Use look up glGetFloatv or glGetDoublev
+	**	for how to get these values from OpenGL.
+	**
+	*******************************/
+
+	GLfloat m[16];
+	glGetFloatv(GL_MODELVIEW_MATRIX, m);
+	Mat4f matMV(m[0], m[1], m[2], m[3],
+		m[4], m[5], m[6], m[7],
+		m[8], m[9], m[10], m[11],
+		m[12], m[13], m[14], m[15]);
+
+	return matMV.transpose(); // convert to row major
+}
+
+// The SpawnParticles function is responsible for generating new 
+// particles in your world.  You will call this function as you 
+// you traverse your model's hierarchy.  When you reach a point
+// in the hierarchy from where particles should be emitted, 
+// call this function!
+//
+// SpawnParticles takes the camera transformation matrix as a 
+// parameter.  More on this later.
+void SpawnParticles(Mat4f CameraTransforms)
+{
+	Mat4f CurrentModelViewMatrix = getModelViewMatrix();
+	Mat4f WorldMatrix = CameraTransforms.inverse() * CurrentModelViewMatrix;
+	Vec4<float> WorldPoint = WorldMatrix  * Vec4<float>(0, 0, 0, 1);
+
+	ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
+	ps->AddParticleStartingAt(Vec3<float>(WorldPoint[0], WorldPoint[1], WorldPoint[2]), 1);
+}
+
+
 double lshoulderx, lupperarmy, llowerarmx, lwristy;
 bool posdeg = true;
 bool anibool = false;
@@ -65,6 +114,21 @@ void BastionModel::draw()
 	// matrix stuff.  Unless you want to fudge directly with the 
 	// projection matrix, don't bother with this ...
 	ModelerView::draw();
+
+
+	/*************************************************
+	**
+	**	NOW SAVE THE CURRENT MODELVIEW MATRIX
+	**
+	**	At this point in execution, the MODELVIEW matrix contains
+	**  ONLY the camera transformation.  We need to save this camera
+	**  transformation so that we can use it later (for reasons
+	**  explained below).
+	**
+	*****************************************************/
+	Mat4f CameraMatrix = getModelViewMatrix();
+
+
 
 	// draw the floor
 /*	setAmbientColor(.1f, .1f, .1f);
@@ -1167,6 +1231,9 @@ void BastionModel::draw()
 						glTranslated(0.2, 0.7, -1.725);
 					}
 
+					
+
+
 					glPopMatrix(); // gun
 				glPopMatrix(); // right upper arm
 			glPopMatrix(); // right shouler
@@ -1451,6 +1518,7 @@ void BastionModel::draw()
 							glRotated(-90, 0.0, 1.0, 0.0);
 						}
 
+						SpawnParticles(CameraMatrix);
 
 							//draw right foot
 							glPushMatrix();
@@ -1502,6 +1570,8 @@ void BastionModel::draw()
 
 
 	glPopMatrix();
+
+	endDraw();
 }
 
 void BastionModel::reset()
@@ -1622,6 +1692,12 @@ int main()
 	controls[LIGHT_TEST] = ModelerControl("Lighting", -25, 25, 1, -2);
 	controls[MOOD] = ModelerControl("Mood", 0, 4, 1, 0);
 	controls[ANIMATE] = ModelerControl("Enable animation", 0, 1, 1, 0);
+
+	// You should create a ParticleSystem object ps here and then
+	// call ModelerApplication::Instance()->SetParticleSystem(ps)
+	// to hook it up to the animator interface.
+	ParticleSystem* ps = new ParticleSystem;
+	ModelerApplication::Instance()->SetParticleSystem(ps);
 
 	ModelerApplication::Instance()->Init(&createBastionModel, controls, NUMCONTROLS);
 	return ModelerApplication::Instance()->Run();
