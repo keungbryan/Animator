@@ -8,7 +8,7 @@
 
 class Particle {
 public:
-	Particle(Vec3<float> p, float m) : pos(p), mass(m), gravity(Vec3<float>(0, -5, 0)) {}
+	Particle(Vec3<float> p, float m) : pos(p), mass(m), gravity(Vec3<float>(0, -9.81, 0)) {}
 
 	void setPos(Vec3<float> p) {
 		pos = p;
