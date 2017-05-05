@@ -58,7 +58,7 @@ void ParticleSystem::startSimulation(float t)
 	simulate = true;
 	dirty = true;
 	clearBaked();
-
+	bake_start_time = t;
 }
 
 /** Stop the simulation */
@@ -159,7 +159,7 @@ void ParticleSystem::clearBaked()
 
 }
 
-void ParticleSystem::AddParticleStartingAt(Vec3<float> pos, int num)
+void ParticleSystem::AddParticleStartingAt(Vec3<float> pos, int num, double xRotate, double yRotate, double zRotate)
 {
 	if (simulate) {
 //		if (!isBakedAt(curr_time + bake_fps)) {
@@ -177,11 +177,38 @@ void ParticleSystem::AddParticleStartingAt(Vec3<float> pos, int num)
 				p.setVelocity(Vec3<float>(xVelocity, yVelocity, zVelocity));
 				*/
 
-				float xvel = rand() % 2 + 3;
-				float yvel = rand() % 2 + 1;
-				float zvel = rand() % 2 + 5;
+				float xvel = rand() % 3 - 1.5;
+				float yvel = (rand() % 3 + 7);// *cos(xRotate*3.1415926535 / 180.0);
+				float zvel = (rand() % 3 - 1.5);// *sin(xRotate*3.1415926535 / 180.0);
 
-				p.setVelocity(Vec3<float>(xvel, yvel, zvel));
+				xRotate *= 3.1415926535 / 180.0;
+				yRotate *= 3.1415926535 / 180.0;
+				zRotate *= 3.1415926535 / 180.0;
+
+				Mat4f vecMatX(
+					1, 0, 0, 0,
+					0, cos(xRotate), -sin(xRotate), 0,
+					0, sin(xRotate), cos(xRotate), 0,
+					0, 0, 0, 1
+				);
+				Mat4f vecMatY(
+					cos(yRotate), 0, sin(yRotate), 0,
+					0, 1, 0, 0,
+					-sin(yRotate), 0, cos(yRotate), 0,
+					0, 0, 0, 1
+				);
+				Mat4f vecMatZ(
+					cos(zRotate), -sin(zRotate), 0, 0,
+					sin(zRotate), cos(zRotate), 0, 0, 
+					0, 0, 1, 0,
+					0, 0, 0, 1
+				);
+
+				Vec4f velocity(xvel, yvel, zvel, 1);
+				velocity = vecMatX*vecMatZ * velocity;
+				
+
+				p.setVelocity(Vec3<float>(velocity[0], velocity[1], velocity[2]));
 
 				/*
 				vector<Force*>::iterator iter;

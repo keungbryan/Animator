@@ -17,6 +17,7 @@
 #define __PARTICLE_SYSTEM_H__
 
 #include "vec.h"
+#include "mat.h"
 #include <vector>
 #include <map>
 #include "particle.h"
@@ -77,7 +78,7 @@ public:
 
 
 
-	virtual void AddParticleStartingAt(Vec3<float> pos, int num);
+	virtual void AddParticleStartingAt(Vec3<float> pos, int num, double xRotate, double yRotate, double zRotate);
 
 	virtual bool isBakedAt(float t);
 

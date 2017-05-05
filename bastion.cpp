@@ -91,14 +91,14 @@ Mat4f getModelViewMatrix()
 //
 // SpawnParticles takes the camera transformation matrix as a 
 // parameter.  More on this later.
-void SpawnParticles(Mat4f CameraTransforms)
+void SpawnParticles(Mat4f CameraTransforms, double xRotate, double yRotate, double zRotate)
 {
 	Mat4f CurrentModelViewMatrix = getModelViewMatrix();
 	Mat4f WorldMatrix = CameraTransforms.inverse() * CurrentModelViewMatrix;
 	Vec4<float> WorldPoint = WorldMatrix  * Vec4<float>(0, 0, 0, 1);
 
 	ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
-	ps->AddParticleStartingAt(Vec3<float>(WorldPoint[0], WorldPoint[1], WorldPoint[2]), 1);
+	ps->AddParticleStartingAt(Vec3<float>(WorldPoint[0], WorldPoint[1], WorldPoint[2]), 1, xRotate, yRotate, zRotate);
 }
 
 
@@ -385,7 +385,7 @@ void BastionModel::draw()
 					}
 				}
 			}
-
+			SpawnParticles(CameraMatrix, VAL(XROTATE), VAL(YROTATE), VAL(ZROTATE));
 			glPopMatrix();
 
 			// draw left limb
@@ -1518,7 +1518,7 @@ void BastionModel::draw()
 							glRotated(-90, 0.0, 1.0, 0.0);
 						}
 
-						SpawnParticles(CameraMatrix);
+						
 
 							//draw right foot
 							glPushMatrix();
